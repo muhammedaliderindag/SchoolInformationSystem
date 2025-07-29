@@ -1,0 +1,118 @@
+﻿@page "/register"
+@using SchoolInformationSystem.Client.DTOs
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Kayıt Ol</h3>
+<hr />
+
+@if (showSuccessMessage)
+{
+    <div class="alert alert-success">
+        Kayıt başarılı! Lütfen giriş sayfasına yönlendiriliyorsunuz...
+    </div>
+}
+
+@if (errors.Any())
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+<EditForm Model="registerModel" OnValidSubmit="HandleRegistration">
+    <DataAnnotationsValidator />
+
+    <div class="form-group mb-3">
+        <label for="firstName">İsim</label>
+        <InputText id="firstName" class="form-control" @bind-Value="registerModel.FirstName" />
+        <ValidationMessage For="@(() => registerModel.FirstName)" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="lastName">Soyisim</label>
+        <InputText id="lastName" class="form-control" @bind-Value="registerModel.LastName" />
+        <ValidationMessage For="@(() => registerModel.LastName)" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="email">E-posta Adresi</label>
+        <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+        <ValidationMessage For="@(() => registerModel.Email)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="password">Şifre</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+        <ValidationMessage For="@(() => registerModel.Password)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="confirmPassword">Şifre (Tekrar)</label>
+        <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+        @if (isSubmitting)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        Kayıt Ol
+    </button>
+</EditForm>
+
+@code {
+    private RegisterDto registerModel = new();
+    private List<string> errors = new();
+    private bool isSubmitting = false;
+    private bool showSuccessMessage = false;
+
+
+    private class ErrorResponse
+    {
+        public IEnumerable<string> Errors { get; set; }
+    }
+
+    private async Task HandleRegistration()
+    {
+        isSubmitting = true;
+        errors.Clear();
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                showSuccessMessage = true;
+                StateHasChanged(); // Mesajın görünmesi için UI'yı güncelle
+                await Task.Delay(2000); // 2 saniye bekle
+                NavManager.NavigateTo("/login");
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                if (errorResponse?.Errors != null)
+                {
+                    errors.AddRange(errorResponse.Errors);
+                }
+                else
+                {
+                    errors.Add("Bilinmeyen bir hata oluştu.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add("Sunucuya bağlanırken bir hata oluştu: " + ex.Message);
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+}

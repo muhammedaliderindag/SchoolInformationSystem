@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@inject CustomAuthStateProvider AuthProvider
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    @* Değişiklik burada: 'user' yerine 'context.User' kullanılıyor *@
+                    Merhaba, @context.User.FindFirst(ClaimTypes.Email)?.Value
+                    <button class="btn btn-link" @onclick="Logout">Çıkış Yap</button>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="login">Giriş Yap</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+
+    private async Task Logout()
+    {
+        // Önce sunucudaki refresh token'ı geçersiz kıl.
+        await Http.PostAsync("api/auth/logout", null);
+
+        // Sonra istemci tarafındaki durumu temizle.
+        await AuthProvider.MarkUserAsLoggedOut();
+
+        // Login sayfasına yönlendir.
+        NavManager.NavigateTo("/login");
+    }
+}
