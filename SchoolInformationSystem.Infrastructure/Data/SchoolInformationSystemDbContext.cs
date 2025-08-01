@@ -12,35 +12,59 @@ public partial class SchoolInformationSystemDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Lesson> Lessons { get; set; }
+
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
+
+    public virtual DbSet<StudentSelectedLesson> StudentSelectedLessons { get; set; }
+
+    public virtual DbSet<Teacher> Teachers { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        OnModelCreatingPartial(modelBuilder);
+        modelBuilder.Entity<Lesson>(entity =>
+        {
+            entity.Property(e => e.LessonId).ValueGeneratedNever();
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RefreshTokens_Users");
+        });
+
+        modelBuilder.Entity<Student>(entity =>
+        {
+            entity.HasOne(d => d.User).WithOne(p => p.Student)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Students_Users");
+        });
+
+        modelBuilder.Entity<StudentSelectedLesson>(entity =>
+        {
+            entity.HasOne(d => d.Lesson).WithMany()
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_StudentSelectedLesson_Lessons");
+        });
+
+        modelBuilder.Entity<Teacher>(entity =>
+        {
+            entity.HasOne(d => d.User).WithOne(p => p.Teacher)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Teachers_Users");
+        });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(u => u.UserId);
-            entity.HasIndex(u => u.Email).IsUnique();
-            entity.Property(u => u.Email).IsRequired();
-            entity.Property(u => u.PasswordHash).IsRequired();
+            entity.Property(e => e.UserId).ValueGeneratedNever();
         });
 
-        // RefreshToken Tablosu Yapılandırması
-        modelBuilder.Entity<RefreshToken>(entity =>
-        {
-            entity.HasKey(rt => rt.Id);
-            entity.Property(rt => rt.Token).IsRequired();
-
-            // İlişki Tanımı (User modeline göre güncellendi)
-            entity.HasOne(rt => rt.User)
-                  .WithMany(u => u.RefreshTokens)
-                  .HasForeignKey(rt => rt.UserId);
-        });
+        OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

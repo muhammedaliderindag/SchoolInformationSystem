@@ -51,9 +51,10 @@ namespace SchoolInformationSystem.Infrastructure.Repositories
             return await _context.Users.AnyAsync(u => u.Email == email);
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task AddUserAsync(User user, Student student)
         {
             await _context.Users.AddAsync(user);
+            await _context.Students.AddAsync(student);
             await _context.SaveChangesAsync();
         }
     }

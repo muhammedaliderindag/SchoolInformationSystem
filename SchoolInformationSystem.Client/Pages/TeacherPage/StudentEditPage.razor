@@ -1,0 +1,134 @@
+﻿@page "/studentoverview/edit/{UserID:int}"
+@inject HttpClient Http
+@inject CustomAuthStateProvider AuthProvider
+@inject NavigationManager NavManager
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using SchoolInformationSystem.Client.DTOs
+@attribute [Authorize]
+<PageTitle>Home</PageTitle>
+
+<div class="d-flex justify-content-center">
+    <div class="d-block">
+        <div class="m-1 text-center">
+            <h1>Öğrenci Bilgileri</h1>
+        </div>
+        @if (StudentsDto != null)
+        {
+            <div class="mt-1 text-center">
+                <h1>@StudentsDto.FirstName @StudentsDto.LastName</h1>
+            </div>
+            <div class="mt-1 text-center">
+                <input type="number" class="form-control" name="schoolnumber" placeholder="@StudentsDto.SchoolNumber" @bind-value="newSchoolNumber" />
+            </div>
+            <div class="mt-1 text-center">
+                <input type="text" class="form-control" name="emailedit" placeholder="@StudentsDto.Email" @bind-value="newEmail" />
+            </div>
+            <div class="text-center d-inline">
+                <button id="denemebutton"  @onclick="SaveData" class="btn btn-outline-primary">Kaydet</button>
+                <button id="denemeabutton" @onclick="HandleLogin" class="btn btn-outline-primary">Ogrenci Olarak Giris Yap</button>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+
+            <div class="alert alert-danger">@errorMessage</div>
+
+        }
+       
+    </div>
+</div>
+
+@code {
+
+
+    [Parameter]
+    public int UserID { get; set; }
+    private string? errorMessage;
+    private int? newSchoolNumber;
+    private string? newEmail;
+    private StudentsDto? StudentsDto;
+    private UpdateStudentDto? UpdateStudentDto;
+
+    private class LoginResponse
+    {
+        public string AccessToken { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        StudentsDto = await Http.GetFromJsonAsync<StudentsDto>($"api/StudentsOverview/{UserID}");
+    }
+
+    private async Task SaveData()
+    {
+        try
+        {
+
+            if (newEmail == null && newSchoolNumber == null)
+            {
+                newEmail = StudentsDto.Email;
+                newSchoolNumber = StudentsDto.SchoolNumber;
+            }
+            else if (newEmail == null)
+            {
+                newEmail = StudentsDto.Email;
+            }
+            else if (newSchoolNumber == null)
+            {
+                newSchoolNumber = StudentsDto.SchoolNumber;
+            }
+            UpdateStudentDto = new UpdateStudentDto
+            {
+                UserId = UserID,
+                Email = newEmail,
+                NewSchoolNum = newSchoolNumber
+            };
+            var response = await Http.PostAsJsonAsync("api/StudentsOverview/Update", UpdateStudentDto);
+            if (response.IsSuccessStatusCode)
+            {
+                var apiResponse = await response.Content.ReadFromJsonAsync<UpdateStudentDto>();
+
+                this.newEmail = apiResponse.Email;
+                this.newSchoolNumber = apiResponse.NewSchoolNum;
+
+                errorMessage = "Güncelleme başarılı!";
+                StateHasChanged();
+            }
+            else
+            {
+                errorMessage = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
+            }
+        }
+        catch (Exception)
+        {
+            errorMessage = "Giriş sırasında bir hata oluştu.";
+        }
+        StateHasChanged();
+    }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/loginStudent", StudentsDto);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                await AuthProvider.MarkUserAsAuthenticated(result.AccessToken);
+                NavManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
+            }
+        }
+        catch (Exception)
+        {
+            errorMessage = "Giriş sırasında bir hata oluştu.";
+        }
+    }
+
+}

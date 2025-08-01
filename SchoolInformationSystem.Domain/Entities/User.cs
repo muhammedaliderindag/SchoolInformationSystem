@@ -13,7 +13,7 @@ public partial class User
 
     [StringLength(50)]
     [Unicode(false)]
-    public string FistName { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
     [StringLength(50)]
     [Unicode(false)]
@@ -27,6 +27,16 @@ public partial class User
     [Unicode(false)]
     public string PasswordHash { get; set; } = null!;
 
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? Roles { get; set; }
+
     [InverseProperty("User")]
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
+    [InverseProperty("User")]
+    public virtual Student? Student { get; set; }
+
+    [InverseProperty("User")]
+    public virtual Teacher? Teacher { get; set; }
 }

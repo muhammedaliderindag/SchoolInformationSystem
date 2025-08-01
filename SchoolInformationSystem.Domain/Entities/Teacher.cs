@@ -6,17 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SchoolInformationSystem.Domain.Entities;
 
-[Index("UserId", Name = "IX_Students", IsUnique = true)]
-public partial class Student
+[Index("UserId", Name = "IX_Teachers", IsUnique = true)]
+public partial class Teacher
 {
     [Key]
-    public int StudentId { get; set; }
+    public int TeacherId { get; set; }
 
-    public int SchoolNumber { get; set; }
+    public int? LessonId { get; set; }
 
     public int UserId { get; set; }
 
     [ForeignKey("UserId")]
-    [InverseProperty("Student")]
+    [InverseProperty("Teacher")]
     public virtual User User { get; set; } = null!;
 }

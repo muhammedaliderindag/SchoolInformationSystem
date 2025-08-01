@@ -89,8 +89,8 @@
             if (response.IsSuccessStatusCode)
             {
                 showSuccessMessage = true;
-                StateHasChanged(); // Mesajın görünmesi için UI'yı güncelle
-                await Task.Delay(2000); // 2 saniye bekle
+                StateHasChanged(); 
+                await Task.Delay(2000);
                 NavManager.NavigateTo("/login");
             }
             else

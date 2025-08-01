@@ -15,6 +15,6 @@ namespace SchoolInformationSystem.Application.Interfaces
         Task UpdateRefreshTokenAsync(RefreshToken refreshToken); // Revoke ve rotasyon için
 
         Task<bool> UserExistsAsync(string email);
-        Task AddUserAsync(User user);
+        Task AddUserAsync(User user, Student student);
     }
 }

@@ -35,15 +35,18 @@ namespace SchoolInformationSystem.API.Controllers
             return Ok(new { AccessToken = accessToken });
         }
 
-        [Authorize]
-        [HttpGet("exa")]
-        public async Task<IActionResult> Example()
+        [HttpPost("loginStudent")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> LoginStudentController([FromBody] StudentsDto model)
         {
-            
+            var ipAddress = GetIpAddress();
+            var (accessToken, refreshToken) = await _authService.LoginAsync(model.Email, ipAddress);
 
-            return Ok(new { AccessToken = "adasdas" });
+            if (string.IsNullOrEmpty(accessToken)) return Unauthorized("Invalid credentials.");
+
+            SetRefreshTokenInCookie(refreshToken!);
+            return Ok(new { AccessToken = accessToken });
         }
-
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()

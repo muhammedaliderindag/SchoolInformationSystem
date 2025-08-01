@@ -5,6 +5,7 @@ using SchoolInformationSystem.Application.Interfaces;
 using SchoolInformationSystem.Application.Services;
 using SchoolInformationSystem.Infrastructure.Data;
 using SchoolInformationSystem.Infrastructure.Repositories;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStudentsOverviewRepositories, StudentsOverviewRepositories>();
+builder.Services.AddScoped<IStudentsOverviewService, StudentsOverviewService>();
 
 builder.Services.AddCors(options =>
 {
@@ -62,6 +65,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration["Jwt:Issuer"],
         ValidAudience = configuration["Jwt:Audience"],
+        NameClaimType = ClaimTypes.NameIdentifier,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
     };
 });

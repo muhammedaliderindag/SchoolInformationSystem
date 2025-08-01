@@ -1,0 +1,88 @@
+﻿@page "/studentoverview"
+@using Microsoft.AspNetCore.Authorization
+@using SchoolInformationSystem.Client.DTOs
+@inject HttpClient Http
+@inject CustomAuthStateProvider AuthProvider
+@inject NavigationManager NavManager
+
+@attribute [Authorize];
+<div class="container mt-4">
+    <h2 class="mb-3">Kullanıcı Listesi</h2>
+
+    <div class="mb-3">
+        <input type="text"
+               class="form-control"
+               placeholder="Ad, soyad veya e-postaya göre ara..."
+               @bind="aramaMetni"
+               @bind:event="oninput" />
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+
+         
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col" style="width: 5%;">#</th>
+                    <th scope="col" style="width: 20%;">Ad</th>
+                    <th scope="col" style="width: 20%;">Soyad</th>
+                    <th scope="col" style="width: 25%";>E-posta</th>
+                    <th scope="col" style="width: 20%;">Okul Numarası</th>
+                    <th scope="col" style="width: 10%;" class="text-center">İncele</th>
+                </tr>
+            </thead>
+
+       
+            <tbody>
+                @if (filtrelenmisKullanicilar.Any())
+                {
+
+                    @foreach (var kullanici in filtrelenmisKullanicilar)
+                    {
+                        <tr>
+                            <th scope="row">@kullanici.UserId</th>
+                            <td>@kullanici.FirstName</td>
+                            <td>@kullanici.LastName</td>
+                            <td>@kullanici.Email</td>
+                            <td>@kullanici.SchoolNumber</td>
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-outline-primary" href="/studentoverview/edit/@kullanici.UserId">
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+            
+                    <tr>
+
+                        <td colspan="6" class="text-center fst-italic py-3">
+                            Arama kriterlerine uygun kullanıcı bulunamadı.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@code {
+    private string aramaMetni = "";
+    private List<StudentsDto> tumKullanicilar = new List<StudentsDto>();
+    private List<StudentsDto> filtrelenmisKullanicilar =>
+        string.IsNullOrWhiteSpace(aramaMetni)
+            ? tumKullanicilar
+            : tumKullanicilar.Where(k =>
+                k.FirstName.Contains(aramaMetni, StringComparison.OrdinalIgnoreCase) ||
+                k.LastName.Contains(aramaMetni, StringComparison.OrdinalIgnoreCase) ||
+                k.Email.Contains(aramaMetni, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        tumKullanicilar = await Http.GetFromJsonAsync<List<StudentsDto>>("api/StudentsOverview/students");
+    }
+}

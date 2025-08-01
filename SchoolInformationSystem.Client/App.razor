@@ -1,9 +1,34 @@
-﻿<!-- App.razor -->
+﻿@inject NavigationManager Navigation
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                
+                <NotAuthorized>
+                    @{
+                        // Kullanıcının gitmek istediği sayfanın URL'sini alalım.
+                        // Böylece giriş yaptıktan sonra onu doğru sayfaya geri yönlendirebiliriz.
+                        var returnUrl = Navigation.ToBaseRelativePath(Navigation.Uri);
+                        
+                        // Eğer kullanıcı ana sayfaya yetkisiz girmeye çalışıyorsa, returnUrl boş olabilir.
+                        // Bu durumda sadece login sayfasına yönlendirelim.
+                        if (string.IsNullOrWhiteSpace(returnUrl))
+                        {
+                            Navigation.NavigateTo("login");
+                        }
+                        else
+                        {
+                            Navigation.NavigateTo($"login?returnUrl={returnUrl}");
+                        }
+                    }
+                </NotAuthorized>
+
+                <Authorizing>
+                    <p>Yetkiniz kontrol ediliyor...</p>
+                </Authorizing>
+
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>

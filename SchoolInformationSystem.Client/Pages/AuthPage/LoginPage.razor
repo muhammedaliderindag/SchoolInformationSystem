@@ -49,7 +49,7 @@
             {
                 var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 await AuthProvider.MarkUserAsAuthenticated(result.AccessToken);
-                NavManager.NavigateTo("/"); // Ana sayfaya yönlendir.
+                NavManager.NavigateTo("/"); 
             }
             else
             {

@@ -42,6 +42,22 @@ namespace SchoolInformationSystem.Application.Services
             return (accessToken, refreshToken.Token);
         }
 
+        public async Task<(string? accessToken, string? refreshToken)> LoginAsync(string email, string ipAddress)
+        {
+            var user = await _authRepositories.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return (null, null);
+            }
+
+            var accessToken = GenerateAccessToken(user);
+            var refreshToken = CreateRefreshToken(user, ipAddress);
+
+            await _authRepositories.AddRefreshTokenAsync(refreshToken);
+
+            return (accessToken, refreshToken.Token);
+        }
+
         public async Task<(string? accessToken, string? newRefreshToken)> RefreshTokenAsync(string token, string ipAddress)
         {
             var refreshToken = await _authRepositories.GetRefreshTokenByTokenAsync(token);
@@ -79,7 +95,7 @@ namespace SchoolInformationSystem.Application.Services
         }
         public async Task<(bool Success, IEnumerable<string> Errors)> RegisterAsync(string firstName, string lastName, string email, string password)
         {
-          
+            Random Random = new Random();
             // 1. Kullanıcının zaten var olup olmadığını kontrol et.
             var userExists = await _authRepositories.UserExistsAsync(email);
             if (userExists)
@@ -89,16 +105,20 @@ namespace SchoolInformationSystem.Application.Services
             // 2. Yeni bir User nesnesi oluştur.
             var user = new User
             {
-                FistName = firstName,
+                FirstName = firstName,
                 LastName = lastName,
                 Email = email,
-                // 3. Şifreyi ASLA düz metin olarak kaydetme! Her zaman hash'le.
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Roles = "Student" 
+            };
 
+            var student = new Student
+            {
+                SchoolNumber = Random.Next(1,1000), 
             };
 
             // 4. Kullanıcıyı veritabanına ekle.
-            await _authRepositories.AddUserAsync(user);
+            await _authRepositories.AddUserAsync(user, student);
             return (true, Enumerable.Empty<string>());
         }
 
@@ -113,6 +133,7 @@ namespace SchoolInformationSystem.Application.Services
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Roles),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
             var token = new JwtSecurityToken(
