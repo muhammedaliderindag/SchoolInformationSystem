@@ -1,6 +1,6 @@
 ﻿using SchoolInformationSystem.Application.DTOs;
 
-namespace SchoolInformationSystem.Application.Interfaces
+namespace SchoolInformationSystem.Application.Interfaces.IStudentsOverview
 {
     public interface IStudentsOverviewRepositories
     {

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SchoolInformationSystem.Application.DTOs;
-using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IAuth;
 using SchoolInformationSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolInformationSystem.Application.Services
+namespace SchoolInformationSystem.Application.Services.Auth
 {
     public class AuthService : IAuthService
     {
@@ -93,6 +93,8 @@ namespace SchoolInformationSystem.Application.Services
             await _authRepositories.UpdateRefreshTokenAsync(refreshToken);
             return true;
         }
+        // ... rest of the file ...
+
         public async Task<(bool Success, IEnumerable<string> Errors)> RegisterAsync(string firstName, string lastName, string email, string password)
         {
             Random Random = new Random();
@@ -109,12 +111,12 @@ namespace SchoolInformationSystem.Application.Services
                 LastName = lastName,
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Roles = "Student" 
+                Roles = "Student"
             };
 
-            var student = new Student
+            var student = new SchoolInformationSystem.Domain.Entities.Student
             {
-                SchoolNumber = Random.Next(1,1000), 
+                SchoolNumber = Random.Next(1, 1000),
             };
 
             // 4. Kullanıcıyı veritabanına ekle.

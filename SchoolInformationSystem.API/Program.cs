@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SchoolInformationSystem.Application.Interfaces;
-using SchoolInformationSystem.Application.Services;
+using SchoolInformationSystem.Application.Interfaces.IAuth;
+using SchoolInformationSystem.Application.Interfaces.IStudent;
+using SchoolInformationSystem.Application.Interfaces.IStudentsOverview;
+using SchoolInformationSystem.Application.Services.Auth;
+using SchoolInformationSystem.Application.Services.Student;
+using SchoolInformationSystem.Application.Services.StudentsOverview;
 using SchoolInformationSystem.Infrastructure.Data;
-using SchoolInformationSystem.Infrastructure.Repositories;
+using SchoolInformationSystem.Infrastructure.Repositories.Auth;
+using SchoolInformationSystem.Infrastructure.Repositories.Students;
+using SchoolInformationSystem.Infrastructure.Repositories.StudentsOverview;
 using System.Security.Claims;
 using System.Text;
 
@@ -36,7 +42,8 @@ builder.Services.AddScoped<IAuthRepositories, AuthRepositories>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStudentsOverviewRepositories, StudentsOverviewRepositories>();
 builder.Services.AddScoped<IStudentsOverviewService, StudentsOverviewService>();
-
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentRepositories, StudentRepositories>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,

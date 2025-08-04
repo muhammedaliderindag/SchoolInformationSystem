@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolInformationSystem.Application.Interfaces
+namespace SchoolInformationSystem.Application.Interfaces.IStudentsOverview
 {
     public interface IStudentsOverviewService
     {

@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SchoolInformationSystem.Application.DTOs;
-using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IAuth;
 using SchoolInformationSystem.Application.Services;
 using SchoolInformationSystem.Infrastructure.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace SchoolInformationSystem.API.Controllers
+namespace SchoolInformationSystem.API.Controllers.Auth
 {
     [ApiController]
     [Route("api/[controller]")]

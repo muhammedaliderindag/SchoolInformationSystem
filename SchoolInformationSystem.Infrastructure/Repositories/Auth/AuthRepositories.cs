@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IAuth;
 using SchoolInformationSystem.Domain.Entities;
 using SchoolInformationSystem.Infrastructure.Data;
 using System;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolInformationSystem.Infrastructure.Repositories
+namespace SchoolInformationSystem.Infrastructure.Repositories.Auth
 {
 
     public class AuthRepositories : IAuthRepositories

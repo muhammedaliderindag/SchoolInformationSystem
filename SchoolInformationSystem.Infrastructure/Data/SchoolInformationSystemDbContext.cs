@@ -54,6 +54,8 @@ public partial class SchoolInformationSystemDbContext : DbContext
 
         modelBuilder.Entity<Teacher>(entity =>
         {
+            entity.HasOne(d => d.Lesson).WithOne(p => p.Teacher).HasConstraintName("FK_Teachers_Lessons");
+
             entity.HasOne(d => d.User).WithOne(p => p.Teacher)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Teachers_Users");

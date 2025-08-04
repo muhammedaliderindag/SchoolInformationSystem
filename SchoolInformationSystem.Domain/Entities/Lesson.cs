@@ -14,4 +14,14 @@ public partial class Lesson
     [StringLength(50)]
     [Unicode(false)]
     public string LessonName { get; set; } = null!;
+
+    public int? Credit { get; set; }
+
+    [Column("AKTS")]
+    public int? Akts { get; set; }
+
+    public int? Derslik { get; set; }
+
+    [InverseProperty("Lesson")]
+    public virtual Teacher? Teacher { get; set; }
 }

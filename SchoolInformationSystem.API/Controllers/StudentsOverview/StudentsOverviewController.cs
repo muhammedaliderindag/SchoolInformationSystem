@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchoolInformationSystem.Application.DTOs;
-using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IStudentsOverview;
 using SchoolInformationSystem.Domain.Entities;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace SchoolInformationSystem.API.Controllers
+namespace SchoolInformationSystem.API.Controllers.StudentsOverview
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -26,7 +26,7 @@ namespace SchoolInformationSystem.API.Controllers
         public async Task<List<StudentsDto>> Get()
         {
             var response = await _StudentsOverview.GetStudentsAsync();
-            return (List<StudentsDto>)response;
+            return response;
         }
         [HttpGet("{UserId}")]
         public async Task<StudentsDto> GetStudentsFromId(int UserId)
@@ -36,7 +36,7 @@ namespace SchoolInformationSystem.API.Controllers
             {
                 return null;
             }
-            return (StudentsDto)students;
+            return students;
         }
 
         [HttpPost("Update")]

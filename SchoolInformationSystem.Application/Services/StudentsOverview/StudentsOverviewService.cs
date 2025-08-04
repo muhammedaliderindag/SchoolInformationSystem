@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SchoolInformationSystem.Application.DTOs;
-using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IStudentsOverview;
 using SchoolInformationSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolInformationSystem.Application.Services
+namespace SchoolInformationSystem.Application.Services.StudentsOverview
 {
     public class StudentsOverviewService : IStudentsOverviewService
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolInformationSystem.Application.DTOs;
-using SchoolInformationSystem.Application.Interfaces;
+using SchoolInformationSystem.Application.Interfaces.IStudentsOverview;
 using SchoolInformationSystem.Domain.Entities;
 using SchoolInformationSystem.Infrastructure.Data;
 using System;
@@ -10,7 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolInformationSystem.Infrastructure.Repositories
+namespace SchoolInformationSystem.Infrastructure.Repositories.StudentsOverview
 {
     public class StudentsOverviewRepositories : IStudentsOverviewRepositories
     {
@@ -43,7 +43,7 @@ namespace SchoolInformationSystem.Infrastructure.Repositories
                 SchoolNumber = userEntity.Student?.SchoolNumber ?? 0,
             };
 
-            return (StudentsDto)studentDto;
+            return studentDto;
 }
 
         public async Task<List<StudentsDto>> GetStudentsListAsync()
