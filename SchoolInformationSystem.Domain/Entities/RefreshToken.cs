@@ -17,7 +17,7 @@ public partial class RefreshToken
     public string Token { get; set; } = null!;
 
     public DateTime Expires { get; set; }
-
+    public bool IsActive => DateTime.UtcNow <= Expires && Revoked == null;
     public DateTime Created { get; set; }
 
     [StringLength(45)]
@@ -27,7 +27,7 @@ public partial class RefreshToken
 
     [StringLength(45)]
     public string? RevokedByIp { get; set; }
-    public bool IsActive => DateTime.UtcNow <= Expires && Revoked == null;
+
     [StringLength(512)]
     public string? ReplacedByToken { get; set; }
 

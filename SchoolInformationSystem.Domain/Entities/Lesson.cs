@@ -23,5 +23,8 @@ public partial class Lesson
     public int? Derslik { get; set; }
 
     [InverseProperty("Lesson")]
+    public virtual ICollection<StudentSelectedLesson> StudentSelectedLessons { get; set; } = new List<StudentSelectedLesson>();
+
+    [InverseProperty("Lesson")]
     public virtual Teacher? Teacher { get; set; }
 }

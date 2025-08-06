@@ -19,16 +19,26 @@ namespace SchoolInformationSystem.Application.Services.Student
             _StudentRepositories = StudentRepositories;
         }
 
-        public async Task<List<LessonList>> GetLessonsAsync()
+        public async Task<List<LessonList>> GetLessonsAsync(int UserId)
         {
             
-            var lessons = await _StudentRepositories.GetLessonsAsyncRepo();
+            var lessons = await _StudentRepositories.GetLessonsAsyncRepo(UserId);
 
             if (lessons == null)
             {
                 return null; 
             }
             return lessons;
+        }
+
+        public async Task<ServiceResponse<string>> SaveSelectedLessons(List<LessonList> list, int UserId)
+        {
+            var RepoResponse = await _StudentRepositories.SaveSelectedLessonsRepo(list, UserId);
+            if (RepoResponse.IsSuccess)
+            {
+                return RepoResponse;
+            }
+            return RepoResponse;
         }
     }
 }

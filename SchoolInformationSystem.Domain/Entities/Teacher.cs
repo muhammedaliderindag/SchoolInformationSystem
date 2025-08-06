@@ -21,6 +21,9 @@ public partial class Teacher
     [InverseProperty("Teacher")]
     public virtual Lesson? Lesson { get; set; }
 
+    [InverseProperty("Teacher")]
+    public virtual ICollection<StudentSelectedLesson> StudentSelectedLessons { get; set; } = new List<StudentSelectedLesson>();
+
     [ForeignKey("UserId")]
     [InverseProperty("Teacher")]
     public virtual User User { get; set; } = null!;

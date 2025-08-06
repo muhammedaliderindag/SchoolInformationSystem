@@ -6,10 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SchoolInformationSystem.Domain.Entities;
 
-[Keyless]
 [Table("StudentSelectedLesson")]
 public partial class StudentSelectedLesson
 {
+    [Key]
+    public int Id { get; set; }
+
     public int StudentId { get; set; }
 
     public int LessonId { get; set; }
@@ -17,5 +19,14 @@ public partial class StudentSelectedLesson
     public int TeacherId { get; set; }
 
     [ForeignKey("LessonId")]
+    [InverseProperty("StudentSelectedLessons")]
     public virtual Lesson Lesson { get; set; } = null!;
+
+    [ForeignKey("StudentId")]
+    [InverseProperty("StudentSelectedLessons")]
+    public virtual Student Student { get; set; } = null!;
+
+    [ForeignKey("TeacherId")]
+    [InverseProperty("StudentSelectedLessons")]
+    public virtual Teacher Teacher { get; set; } = null!;
 }

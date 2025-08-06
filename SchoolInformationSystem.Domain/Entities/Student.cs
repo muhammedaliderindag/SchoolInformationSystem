@@ -16,6 +16,9 @@ public partial class Student
 
     public int UserId { get; set; }
 
+    [InverseProperty("Student")]
+    public virtual ICollection<StudentSelectedLesson> StudentSelectedLessons { get; set; } = new List<StudentSelectedLesson>();
+
     [ForeignKey("UserId")]
     [InverseProperty("Student")]
     public virtual User User { get; set; } = null!;

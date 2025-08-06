@@ -9,6 +9,7 @@ namespace SchoolInformationSystem.Application.Interfaces.IStudent
 {
     public interface IStudentRepositories
     {
-        Task<List<LessonList>> GetLessonsAsyncRepo();
+        Task<List<LessonList>> GetLessonsAsyncRepo(int UserId);
+        Task<ServiceResponse<string>> SaveSelectedLessonsRepo(List<LessonList> list,int UserId);
     }
 }

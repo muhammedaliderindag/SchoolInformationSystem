@@ -47,9 +47,17 @@ public partial class SchoolInformationSystemDbContext : DbContext
 
         modelBuilder.Entity<StudentSelectedLesson>(entity =>
         {
-            entity.HasOne(d => d.Lesson).WithMany()
+            entity.HasOne(d => d.Lesson).WithMany(p => p.StudentSelectedLessons)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_StudentSelectedLesson_Lessons");
+                .HasConstraintName("FK_StudentSelectedLesson_Lessons1");
+
+            entity.HasOne(d => d.Student).WithMany(p => p.StudentSelectedLessons)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_StudentSelectedLesson_Students");
+
+            entity.HasOne(d => d.Teacher).WithMany(p => p.StudentSelectedLessons)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_StudentSelectedLesson_Teachers");
         });
 
         modelBuilder.Entity<Teacher>(entity =>
